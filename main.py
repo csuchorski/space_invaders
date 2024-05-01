@@ -1,7 +1,7 @@
 import pygame
 
 from Player import Player 
-  
+from Enemy import Enemy  
 background_colour = (50, 50, 50) 
 screen_w, screen_h = 500, 500
 screen = pygame.display.set_mode((screen_w, screen_h)) 
@@ -12,7 +12,7 @@ screen.fill(background_colour)
 pygame.display.flip() 
   
 player = Player(screen_w, screen_h)
-
+enemies = [Enemy(x, y*60) for x in range(screen_w//4, 3*screen_w//4, 60) for y in range(1,4)]
 
 running = True
 while running: 
@@ -28,4 +28,7 @@ while running:
             
     screen.fill(background_colour)
     screen.blit(player.image, (player.rect.x, player.rect.y))
+    for enemy in enemies:
+        screen.blit(enemy.image, enemy.rect)
     pygame.display.flip()
+
