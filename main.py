@@ -28,8 +28,10 @@ while running:
         player.move(-5, screen_w)
     if keys[pygame.K_RIGHT]:
         player.move(5, screen_w)
-    if keys[pygame.K_SPACE]:
-        bullets.append(Projectile(player.rect.x + player.rect.width//2, player.rect.y))
+    if keys[pygame.K_SPACE] and player.can_shoot(): 
+            bullets.append(Projectile(player.rect.x + player.rect.width//2, player.rect.y))
+
+
     screen.fill(background_colour)
 
     player.draw(screen)
@@ -37,6 +39,8 @@ while running:
         enemy.draw(screen)
     for bullet in bullets:
         bullet.y -= bullet.speed
+        if bullet.y < 0:
+            bullets.remove(bullet)
         pygame.draw.circle(screen, bullet.color, (bullet.x, bullet.y), bullet.radius)
         circle_rect = pygame.Rect(bullet.x - bullet.radius, bullet.y - bullet.radius, bullet.radius*2, bullet.radius*2)
         hit_id = circle_rect.collidelist([enemy.rect for enemy in enemies])
