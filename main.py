@@ -38,9 +38,12 @@ while running:
     for bullet in bullets:
         bullet.y -= bullet.speed
         pygame.draw.circle(screen, bullet.color, (bullet.x, bullet.y), bullet.radius)
-        hit_id = bullet.rect.collidelist(enemies)
+        circle_rect = pygame.Rect(bullet.x - bullet.radius, bullet.y - bullet.radius, bullet.radius*2, bullet.radius*2)
+        hit_id = circle_rect.collidelist([enemy.rect for enemy in enemies])
         if hit_id != -1:
             enemies.pop(hit_id) 
             bullets.remove(bullet)
+    if len(enemies) == 0:
+        running = False
     pygame.display.flip()
 
