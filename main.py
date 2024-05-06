@@ -14,8 +14,13 @@ pygame.display.flip()
   
 player = Player(screen_w, screen_h)
 enemies = [Enemy(x, y*60) for x in range(screen_w//4, 3*screen_w//4, 60) for y in range(1,4)]
+enemy_group = pygame.sprite.Group()
+enemy_group.add(enemies)
 bullets = []
+is_turn = False
 
+move_timer_event = pygame.USEREVENT + 1
+pygame.time.set_timer(move_timer_event, 1000)
 
 running = True
 while running: 
@@ -24,6 +29,12 @@ while running:
     for event in pygame.event.get(): 
         if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]: 
             running = False
+        if event.type == move_timer_event:
+            if any([enemy.rect.x <= 0 or enemy.rect.x + enemy.rect.width >= screen_w for enemy in enemies]):
+                is_turn = not is_turn
+            enemy_group.update(is_turn)
+
+
     if keys[pygame.K_LEFT]:
         player.move(-5, screen_w)
     if keys[pygame.K_RIGHT]:
@@ -31,12 +42,14 @@ while running:
     if keys[pygame.K_SPACE] and player.can_shoot(): 
             bullets.append(Projectile(player.rect.x + player.rect.width//2, player.rect.y))
 
-
     screen.fill(background_colour)
 
     player.draw(screen)
     for enemy in enemies:
         enemy.draw(screen)
+        if enemy.rect.x <= 0 or enemy.rect.x + enemy.rect.width >= screen_w:
+            is_turn = not is_turn
+
     for bullet in bullets:
         bullet.y -= bullet.speed
         if bullet.y < 0:
