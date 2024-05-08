@@ -5,7 +5,7 @@ class Enemy(pygame.sprite.Sprite):
         #big_image = pygame.image.load("./images/enemy_ship.jpg")
         #self.image = pygame.transform.scale(big_image, (50,50))
         pygame.sprite.Sprite.__init__(self)
-        width = 40
+        width = 50
         height = 50
         self.color = (255, 0 ,0)
         self.rect = pygame.Rect(start_x, start_y,width,height) 
