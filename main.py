@@ -13,11 +13,11 @@ screen.fill(background_colour)
 pygame.display.flip() 
   
 player = Player(screen_w, screen_h)
-enemies = [Enemy(x, y*60) for x in range(screen_w//4, 3*screen_w//4, 60) for y in range(1,4)]
+enemies = [Enemy(x, y*60) for x in range(screen_w//4, 3*screen_w//4, 50) for y in range(1,4)]
 enemy_group = pygame.sprite.Group()
 enemy_group.add(enemies)
 bullets = []
-is_turn = False
+direction = 1 #Enemies should move right by default
 
 move_timer_event = pygame.USEREVENT + 1
 pygame.time.set_timer(move_timer_event, 1000)
@@ -30,9 +30,12 @@ while running:
         if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]: 
             running = False
         if event.type == move_timer_event:
-            if any([enemy.rect.x <= 0 or enemy.rect.x + enemy.rect.width >= screen_w for enemy in enemies]):
-                is_turn = not is_turn
-            enemy_group.update(is_turn)
+            if any([enemy.rect.x <= 0 for enemy in enemies]):
+                direction = 1
+            if any([enemy.rect.x + enemy.rect.width >= screen_w for enemy in enemies]):
+                direction = -1
+
+            enemy_group.update(direction)
 
 
     if keys[pygame.K_LEFT]:
@@ -47,8 +50,6 @@ while running:
     player.draw(screen)
     for enemy in enemies:
         enemy.draw(screen)
-        if enemy.rect.x <= 0 or enemy.rect.x + enemy.rect.width >= screen_w:
-            is_turn = not is_turn
 
     for bullet in bullets:
         bullet.y -= bullet.speed

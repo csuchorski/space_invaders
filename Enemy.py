@@ -5,7 +5,7 @@ class Enemy(pygame.sprite.Sprite):
         #big_image = pygame.image.load("./images/enemy_ship.jpg")
         #self.image = pygame.transform.scale(big_image, (50,50))
         pygame.sprite.Sprite.__init__(self)
-        width = 50
+        width = 40
         height = 50
         self.color = (255, 0 ,0)
         self.rect = pygame.Rect(start_x, start_y,width,height) 
@@ -15,13 +15,12 @@ class Enemy(pygame.sprite.Sprite):
     def draw(self, surf):
         pygame.draw.rect(surf, self.color, self.rect)
     
-    def move(self, is_turn):
-        if is_turn:
-            self.direction *= -1
+    def move(self):
         self.rect.x += self.speed * self.direction 
 
-    def update(self, is_turn):
+    def update(self, direction):
         pygame.sprite.Sprite.update(self)
-        self.move(is_turn)
+        self.direction = direction
+        self.move()
 
 
