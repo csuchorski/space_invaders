@@ -1,4 +1,5 @@
 import pygame
+import random
 
 from Player import Player 
 from Enemy import Enemy
@@ -17,10 +18,13 @@ enemies = [Enemy(x, y*60) for x in range(screen_w//4, 3*screen_w//4, 60) for y i
 enemy_group = pygame.sprite.Group()
 enemy_group.add(enemies)
 bullets = []
+enemy_bullets = []
 direction = 1 #Enemies should move right by default
 
 move_timer_event = pygame.USEREVENT + 1
+enemy_shoot_event = pygame.USEREVENT + 2
 pygame.time.set_timer(move_timer_event, 1000)
+pygame.time.set_timer(enemy_shoot_event, 1500)
 
 running = True
 while running: 
@@ -34,9 +38,11 @@ while running:
                 direction = 1
             if any([enemy.rect.x + enemy.rect.width >= screen_w for enemy in enemies]):
                 direction = -1
-
             enemy_group.update(direction)
-
+        if event.type == enemy_shoot_event:
+            shooter_idx = random.randint(0, len(enemies))
+            shooter = enemies[shooter_idx]
+            enemy_bullets.append(Projectile(shooter.rect.x + shooter.rect.width//2, shooter.rect.y))
 
     if keys[pygame.K_LEFT]:
         player.move(-5, screen_w)
@@ -51,6 +57,17 @@ while running:
     for enemy in enemies:
         enemy.draw(screen)
 
+    for bullet in enemy_bullets:
+        bullet.y += bullet.speed
+        if bullet.y > screen_h:
+            enemy_bullets.remove(bullet)
+            continue
+        pygame.draw.circle(screen, bullet.color, (bullet.x, bullet.y), bullet.radius)
+        circle_rect = pygame.Rect(bullet.x - bullet.radius, bullet.y - bullet.radius, bullet.radius*2, bullet.radius*2)
+        if circle_rect.colliderect(player.rect):
+            player.health -= 1
+            enemy_bullets.remove(bullet)
+
     for bullet in bullets:
         bullet.y -= bullet.speed
         if bullet.y < 0:
@@ -61,7 +78,7 @@ while running:
         if hit_id != -1:
             enemies.pop(hit_id) 
             bullets.remove(bullet)
-    if len(enemies) == 0:
+    if len(enemies) == 0 or player.health == 0:
         running = False
     pygame.display.flip()
 
