@@ -40,7 +40,7 @@ while running:
                 direction = -1
             enemy_group.update(direction)
         if event.type == enemy_shoot_event:
-            shooter_idx = random.randint(0, len(enemies))
+            shooter_idx = random.randint(0, len(enemies)-1)
             shooter = enemies[shooter_idx]
             enemy_bullets.append(Projectile(shooter.rect.x + shooter.rect.width//2, shooter.rect.y))
 
